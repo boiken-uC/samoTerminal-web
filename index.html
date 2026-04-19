@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="samoTerminal – Digitale Zeiterfassung per NFC. Mitarbeiter buchen sich per Chip ein. Kein Papier, keine manuelle Erfassung, GoBD-konform.">
+  <meta property="og:title" content="samoTerminal. – Zeiterfassung per Tipp.">
+  <meta property="og:description" content="NFC-basierte digitale Zeiterfassung für Android-Tablets. Einfach, schnell, GoBD-konform.">
+  <meta property="og:type" content="website">
+  <title>samoTerminal. – Zeiterfassung per Tipp.</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --navy:         #0F172A;
+      --navy-mid:     #1E293B;
+      --purple:       #818CF8;
+      --purple-2:     #6366F1;
+      --purple-3:     #4F46E5;
+      --purple-light: #EEF2FF;
+      --white:        #FFFFFF;
+      --gray:         #64748B;
+      --gray-light:   #F8FAFC;
+      --border:       #E2E8F0;
+      --text:         #1E293B;
+      --font-head:    'Outfit', sans-serif;
+      --font-body:    'Inter', system-ui, sans-serif;
+    }
+
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: var(--font-body);
+      color: var(--text);
+      background: var(--white);
+      -webkit-font-smoothing: antialiased;
+      line-height: 1.6;
+    }
+
+    /* ── Nav ── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      background: rgba(15, 23, 42, 0.94);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border-bottom: 1px solid rgba(129, 140, 248, 0.12);
+      height: 64px; padding: 0 6%;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .nav-logo img { height: 26px; display: block; }
+    .nav-links { list-style: none; display: flex; align-items: center; gap: 36px; }
+    .nav-links a { color: rgba(255,255,255,0.65); text-decoration: none; font-size: 14px; font-weight: 500; transition: color .2s; }
+    .nav-links a:hover { color: var(--purple); }
+    .nav-cta { background: var(--purple) !important; color: var(--navy) !important; font-weight: 700 !important; padding: 8px 20px; border-radius: 7px; }
+    .nav-cta:hover { background: var(--purple-2) !important; color: #fff !important; }
+    .nav-by { font-size: 12px; color: rgba(255,255,255,0.3); display: flex; align-items: center; gap: 8px; }
+    .nav-by img { height: 16px; opacity: .5; }
+
+    /* ── Hero ── */
+    #hero {
+      min-height: 100vh;
+      background: var(--navy);
+      display: flex; align-items: center;
+      padding: 120px 6% 100px;
+      position: relative; overflow: hidden;
+    }
+    .hero-dots {
+      position: absolute; inset: 0; z-index: 0;
+      background-image: radial-gradient(circle at 1px 1px, rgba(129,140,248,0.14) 1px, transparent 0);
+      background-size: 36px 36px;
+    }
+    .hero-glow { position: absolute; z-index: 0; width: 700px; height: 700px; background: radial-gradient(circle, rgba(129,140,248,0.09) 0%, transparent 65%); top: -150px; right: -150px; }
+    .hero-content { position: relative; z-index: 1; max-width: 800px; }
+
+    .eyebrow {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: rgba(129,140,248,0.1); border: 1px solid rgba(129,140,248,0.22);
+      border-radius: 99px; padding: 5px 16px;
+      font-size: 12px; font-weight: 700; color: var(--purple);
+      letter-spacing: .08em; text-transform: uppercase; margin-bottom: 30px;
+    }
+    .eyebrow-dot { width: 6px; height: 6px; background: var(--purple); border-radius: 50%; }
+
+    .hero-h1 {
+      font-family: var(--font-head); font-weight: 800;
+      font-size: clamp(38px, 5.5vw, 68px);
+      color: var(--white); line-height: 1.07;
+      letter-spacing: -0.03em; margin-bottom: 26px;
+    }
+    .hero-h1 em { font-style: normal; color: var(--purple); }
+    .hero-sub { font-size: clamp(16px, 1.8vw, 19px); color: rgba(255,255,255,0.6); max-width: 560px; line-height: 1.75; margin-bottom: 44px; }
+
+    .btn-row { display: flex; gap: 14px; flex-wrap: wrap; }
+    .btn-primary {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: var(--purple); color: var(--navy);
+      font-family: var(--font-body); font-weight: 700; font-size: 15px;
+      padding: 14px 28px; border-radius: 8px; text-decoration: none;
+      transition: background .2s, transform .15s;
+    }
+    .btn-primary:hover { background: var(--purple-2); transform: translateY(-2px); }
+    .btn-outline {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: transparent; color: rgba(255,255,255,0.75);
+      font-family: var(--font-body); font-weight: 600; font-size: 15px;
+      padding: 14px 28px; border-radius: 8px; text-decoration: none;
+      border: 1px solid rgba(255,255,255,0.18); transition: border-color .2s, color .2s;
+    }
+    .btn-outline:hover { border-color: var(--purple); color: var(--purple); }
+
+    /* ── Shared ── */
+    .section { padding: 100px 6%; }
+    .section-inner { max-width: 1160px; margin: 0 auto; }
+    .label { font-size: 12px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--purple-2); margin-bottom: 12px; }
+    .label-light { color: var(--purple); }
+    .section-h2 { font-family: var(--font-head); font-weight: 800; font-size: clamp(28px, 3.5vw, 46px); color: var(--navy); line-height: 1.12; letter-spacing: -0.025em; margin-bottom: 18px; }
+    .section-h2-light { color: #fff; }
+    .section-lead { font-size: 17px; color: var(--gray); max-width: 580px; line-height: 1.75; margin-bottom: 60px; }
+    .section-lead-light { color: rgba(255,255,255,0.55); }
+
+    /* ── Features ── */
+    #features { background: var(--white); }
+    .features-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+    .feature {
+      background: var(--gray-light); border: 1px solid var(--border);
+      border-radius: 14px; padding: 36px 32px;
+      transition: border-color .25s, box-shadow .25s, transform .2s;
+    }
+    .feature:hover { border-color: var(--purple); box-shadow: 0 8px 32px rgba(99,102,241,0.1); transform: translateY(-3px); }
+    .feature-icon {
+      width: 52px; height: 52px; background: var(--purple-light);
+      border-radius: 12px; display: flex; align-items: center; justify-content: center;
+      margin-bottom: 22px; color: var(--purple-2);
+    }
+    .feature h3 { font-family: var(--font-head); font-weight: 800; font-size: 21px; color: var(--navy); letter-spacing: -0.02em; margin-bottom: 12px; }
+    .feature p { font-size: 14px; color: var(--gray); line-height: 1.75; }
+
+    /* ── So funktioniert's ── */
+    #wie { background: var(--navy); position: relative; overflow: hidden; }
+    .schritte { display: grid; grid-template-columns: repeat(3, 1fr); gap: 32px; position: relative; z-index: 1; }
+    .schritt { text-align: center; padding: 0 16px; }
+    .schritt-nr {
+      width: 56px; height: 56px; border-radius: 50%;
+      background: rgba(129,140,248,0.12); border: 1px solid rgba(129,140,248,0.25);
+      display: flex; align-items: center; justify-content: center;
+      font-family: var(--font-head); font-weight: 800; font-size: 22px;
+      color: var(--purple); margin: 0 auto 20px;
+    }
+    .schritt h3 { font-family: var(--font-head); font-weight: 800; font-size: 20px; color: #fff; letter-spacing: -0.02em; margin-bottom: 12px; }
+    .schritt p { font-size: 14px; color: rgba(255,255,255,0.5); line-height: 1.75; }
+    .schritte-linie {
+      position: absolute; top: 28px; left: calc(16.66% + 28px); right: calc(16.66% + 28px);
+      height: 1px; background: rgba(129,140,248,0.2); z-index: 0;
+    }
+
+    /* ── Zitat ── */
+    #zitat { background: var(--gray-light); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); padding: 72px 6%; text-align: center; }
+    #zitat blockquote { font-family: var(--font-head); font-weight: 800; font-size: clamp(22px, 3vw, 34px); color: var(--navy); letter-spacing: -0.025em; line-height: 1.35; max-width: 760px; margin: 0 auto; }
+    #zitat blockquote em { font-style: normal; color: var(--purple-2); }
+
+    /* ── Kontakt ── */
+    #kontakt { background: linear-gradient(140deg, var(--purple-3) 0%, #7C3AED 100%); padding: 96px 6%; text-align: center; }
+    #kontakt h2 { font-family: var(--font-head); font-weight: 800; font-size: clamp(28px, 3.5vw, 46px); color: #fff; letter-spacing: -0.025em; margin-bottom: 16px; }
+    #kontakt p { font-size: 18px; color: rgba(255,255,255,0.75); margin-bottom: 40px; }
+    .btn-white { display: inline-flex; align-items: center; gap: 10px; background: #fff; color: var(--purple-3); font-family: var(--font-body); font-weight: 700; font-size: 15px; padding: 15px 32px; border-radius: 8px; text-decoration: none; transition: transform .2s, box-shadow .2s; }
+    .btn-white:hover { transform: translateY(-2px); box-shadow: 0 12px 36px rgba(0,0,0,0.2); }
+
+    /* ── Footer ── */
+    footer { background: var(--navy); border-top: 1px solid rgba(255,255,255,0.06); padding: 36px 6%; }
+    .footer-inner { max-width: 1160px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px; }
+    .footer-brand { display: flex; flex-direction: column; gap: 8px; }
+    footer .product-logo { height: 22px; }
+    .footer-by { display: flex; align-items: center; gap: 6px; font-size: 12px; color: rgba(255,255,255,0.25); }
+    .footer-by img { height: 14px; opacity: .35; }
+    .footer-links { display: flex; gap: 28px; }
+    .footer-links a { font-size: 13px; color: rgba(255,255,255,0.35); text-decoration: none; transition: color .2s; }
+    .footer-links a:hover { color: var(--purple); }
+    .footer-copy { font-size: 13px; color: rgba(255,255,255,0.22); }
+
+    @media (max-width: 768px) {
+      nav .nav-links { display: none; }
+      .features-grid, .schritte { grid-template-columns: 1fr; }
+      .schritte-linie { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <a href="/" class="nav-logo">
+      <img src="./assets/samoTerminal-logo-dark.png" alt="samoTerminal.">
+    </a>
+    <ul class="nav-links">
+      <li><a href="#features">Features</a></li>
+      <li><a href="#wie">So funktionierts</a></li>
+      <li><a href="#kontakt" class="nav-cta">Kontakt aufnehmen</a></li>
+    </ul>
+  </nav>
+
+  <!-- Hero -->
+  <section id="hero">
+    <div class="hero-dots"></div>
+    <div class="hero-glow"></div>
+    <div class="hero-content">
+      <div class="eyebrow">
+        <span class="eyebrow-dot"></span>
+        Digitale Zeiterfassung · Android · NFC
+      </div>
+      <h1 class="hero-h1">
+        Zeiterfassung,<br>
+        die <em>einfach funktioniert.</em>
+      </h1>
+      <p class="hero-sub">
+        Chip ans Tablet — fertig. samoTerminal ersetzt Stempeluhren, Papierlisten und manuelle Erfassung durch ein modernes NFC-basiertes System für Android. GoBD-konform, ohne Schulungsaufwand.
+      </p>
+      <div class="btn-row">
+        <a href="#kontakt" class="btn-primary">
+          Demo anfragen
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+        </a>
+        <a href="#wie" class="btn-outline">So funktioniert's</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Features -->
+  <section id="features" class="section">
+    <div class="section-inner">
+      <div class="label">Features</div>
+      <h2 class="section-h2">Alles was Sie brauchen —<br>nichts was Sie nicht brauchen.</h2>
+      <p class="section-lead">samoTerminal ist bewusst einfach gehalten. Kein Overhead, keine unnötigen Module — nur was im Betrieb täglich gebraucht wird.</p>
+      <div class="features-grid">
+        <div class="feature">
+          <div class="feature-icon">
+            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/>
+            </svg>
+          </div>
+          <h3>NFC-Einbuchung</h3>
+          <p>Mitarbeiter tippen ihren NFC-Chip ans Tablet und sind eingebucht. Kein PIN, kein Login, keine Wartezeit — weniger als eine Sekunde.</p>
+        </div>
+        <div class="feature">
+          <div class="feature-icon">
+            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+            </svg>
+          </div>
+          <h3>GoBD-konform</h3>
+          <p>Alle Buchungen werden manipulationssicher protokolliert und erfüllen die Anforderungen der GoBD. Revision-sicher von Anfang an.</p>
+        </div>
+        <div class="feature">
+          <div class="feature-icon">
+            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18"/>
+            </svg>
+          </div>
+          <h3>Android-App</h3>
+          <p>Läuft auf handelsüblichen Android-Tablets. Kein proprietäres Terminal-Hardware nötig — günstig in der Anschaffung, einfach zu ersetzen.</p>
+        </div>
+        <div class="feature">
+          <div class="feature-icon">
+            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+            </svg>
+          </div>
+          <h3>Echtzeit-Übersicht</h3>
+          <p>Wer ist gerade anwesend? Das Management sieht alle aktiven Buchungen live — ohne Rückfragen, ohne Zettelwirtschaft.</p>
+        </div>
+        <div class="feature">
+          <div class="feature-icon">
+            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/>
+            </svg>
+          </div>
+          <h3>Export &amp; Auswertung</h3>
+          <p>Monatsauswertungen, Soll-Ist-Vergleiche und Stundenübersichten auf Knopfdruck — direkt für die Lohnbuchhaltung aufbereitet.</p>
+        </div>
+        <div class="feature">
+          <div class="feature-icon">
+            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+            </svg>
+          </div>
+          <h3>Mehrere Standorte</h3>
+          <p>Ein System, mehrere Tablets, mehrere Standorte. Zentrale Verwaltung aller Mitarbeiter und Buchungen über ein einziges Dashboard.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- So funktionierts -->
+  <section id="wie" class="section" style="position:relative">
+    <div class="hero-dots" style="opacity:.5"></div>
+    <div class="section-inner" style="position:relative;z-index:1">
+      <div class="label label-light">Ablauf</div>
+      <h2 class="section-h2 section-h2-light">In drei Schritten<br>zum papierlosen Betrieb.</h2>
+      <p class="section-lead section-lead-light" style="margin-bottom:72px">Kein monatelanger Rollout, keine Schulungswochen. samoTerminal ist in einem Tag einsatzbereit.</p>
+      <div style="position:relative">
+        <div class="schritte-linie"></div>
+        <div class="schritte">
+          <div class="schritt">
+            <div class="schritt-nr">1</div>
+            <h3>Einrichtung</h3>
+            <p>Tablet aufstellen, App installieren, Mitarbeiter anlegen und NFC-Chips zuweisen. Fertig in unter einer Stunde.</p>
+          </div>
+          <div class="schritt">
+            <div class="schritt-nr">2</div>
+            <h3>Einbuchen</h3>
+            <p>Mitarbeiter tippen morgens ihren Chip ans Terminal — Kommen und Gehen werden automatisch erfasst.</p>
+          </div>
+          <div class="schritt">
+            <div class="schritt-nr">3</div>
+            <h3>Auswerten</h3>
+            <p>Am Monatsende alle Stunden mit einem Klick exportieren und direkt an die Lohnbuchhaltung weitergeben.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Zitat -->
+  <section id="zitat">
+    <blockquote>
+      „Keine Zettel, keine Rückfragen, keine Fehler.<br>
+      <em>Nur Arbeitszeit, die stimmt.</em>"
+    </blockquote>
+  </section>
+
+  <!-- Kontakt -->
+  <section id="kontakt">
+    <h2>Bereit für die papierlose Zeiterfassung?</h2>
+    <p>Wir zeigen Ihnen samoTerminal live — kostenlos und unverbindlich.</p>
+    <a href="mailto:info@samolabs.de" class="btn-white">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+      Demo anfragen
+    </a>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    <div class="footer-inner">
+      <div class="footer-brand">
+        <img src="./assets/samoTerminal-logo-dark.png" alt="samoTerminal." class="product-logo">
+        <div class="footer-by">
+          ein Produkt von <img src="./assets/samolabs-logo-dark.png" alt="samoLabs.">
+        </div>
+      </div>
+      <div class="footer-links">
+        <a href="https://samolabs.de">samoLabs.</a>
+        <a href="./impressum.html">Impressum</a>
+        <a href="./datenschutz.html">Datenschutz</a>
+      </div>
+      <div class="footer-copy">© <span id="fyear"></span> samoLabs</div>
+    </div>
+  </footer>
+
+  <script>document.getElementById('fyear').textContent = new Date().getFullYear();</script>
+</body>
+</html>
